@@ -87,6 +87,7 @@ while ($drow = $dstmt->fetch(PDO::FETCH_OBJ)) {
     while ($row = $stmt->fetch()) {
         $limits->execute([$row['bankid']]);
         $limit = $limits->fetch();
+  
         
         // skip row if bank has already won
         $bankcheck->bindParam(':fdate', $row['fwddate']);
