@@ -38,7 +38,7 @@
 <?php 
 include 'database.php';
 
-$query = "SELECT * FROM banks";
+$query = "SELECT id, bankname FROM banks";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 
@@ -49,7 +49,6 @@ $stmt->execute();
 			<tr>
 				<th>REF</th>
 				<th>BANK</th>
-				<th>LIMIT</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -58,7 +57,6 @@ $stmt->execute();
         		        echo '<tr>
         					<td>'.$row['id'].'</td>
         					<td>'.$row['bankname'].'</td>
-        					<td>'.number_format($row['banklimit']).'</td>
         				</tr>';
 		}?>
 		</tbody>

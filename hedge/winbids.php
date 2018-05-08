@@ -24,29 +24,17 @@
   </div>
 </nav>
 <div class="container">
-	<table class="table">
+	<form action="storewins.php">
+		<input type="submit" value="Store Auction">
+	</form>
+</div>
 
-    	<thead>
-			<tr>
-				<th>REF</th>
-				<th>BANK</th>
-				<th>RATE</th>
-				<th>BID AMOUNT</th>
-				<th>OPTION</th>
-				<th>LIMIT</th>
-				<th>AWARDED AMOUNT</th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="container">
 
 <?php
 
 //include database connection
 include 'database.php';
-
-//reset bank limits
-$conn->query("UPDATE banks SET banklimit='1000000000' WHERE id>0");
-
 
 //store form data into variable
 $batchref = $_POST['batchref'];
@@ -57,177 +45,58 @@ $dstmt = $conn->prepare($sql);
 $dstmt->bindParam(':batchref', $batchref);
 $dstmt->execute();
 
-    
 //start date looping
 while ($drow = $dstmt->fetch(PDO::FETCH_OBJ)) {
-
-    echo '<tr><td><span style="font-weight:bold">'. $drow->fwddate . '</span></td><td><span style="font-weight:bold">'.number_format($drow->couponamt,2). ' is done.</span></td></tr>';
-//     echo 'Bid wins for Coupon date '. $drow->fwddate . ' and Coupon amount ' .number_format($drow->couponamt) . ' done.<br>';
+//     echo 'Coupon date='.$drow->fwddate.'     Coupon amount='.$drow->couponamt.'<br>';
     
-    
-    //set parameters for a particular date
-    $query = "SELECT hedgebids.id, fwddate, couponamt, fwdrate, amtbid, bankname, bankid, bidoption, batchref FROM hedgebids, banks
-               WHERE banks.id=hedgebids.bankid AND batchref=:batchref AND fwddate=:fwddate order by fwdrate desc, bidoption desc ";
+    //query search for coupon date
+    $query = "select hedgebids.id, fwddate, couponamt, bankname, fwdrate, amtbid, batchref from hedgebids, banks where banks.id=hedgebids.bankid and batchref=:batchref and fwddate=:fwddate order by fwdrate desc";
     $stmt = $conn->prepare($query);
+    $stmt->bindParam(':batchref', $drow->batchref);
     $stmt->bindParam(':fwddate', $drow->fwddate);
-    $stmt->bindParam(':batchref', $batchref);
-    $limits = $conn->prepare("SELECT * FROM banks where id=?");
-    $updatelimit = $conn->prepare("UPDATE banks SET banklimit=? WHERE id=?");
     $stmt->execute();
-    
-    $bidwin = $conn->prepare("INSERT INTO results (bidid, bankid, rate, amtbid, bidoption, winamt, batchref, fwddate, couponamt)
-                            VALUES (:bidid, :bankid, :rate, :amtbid, :bidoption, :winamt, :batchref, :fwddate, :couponamt)");
-    
-    $bankcheck = $conn->prepare("select bankid from results where fwddate=:fdate and batchref=:bref");
-    $bankcheck->bindParam(':bref', $drow->batchref);
-
-    //initialize winamount variable
-    $winamount = 0;
     $balance = $drow->couponamt;
-    while ($row = $stmt->fetch()) {
-        $limits->execute([$row['bankid']]);
-        $limit = $limits->fetch();
-        
-        // skip row if bank has already won
-        $bankcheck->bindParam(':fdate', $row['fwddate']);
-        $bankcheck->execute();
-        $bcheck = $bankcheck->fetchAll(PDO::FETCH_COLUMN);
-//         print_r($bcheck);
-//         die;
-        
-        if (in_array($row['bankid'], $bcheck)) {
-            echo 'bank already won.';
-            continue;
-        } else {
-            // if amtbid is less than limit and amtbid is less than balance
-            if ( $row['amtbid'] <= $limit['banklimit'] and $row['amtbid'] <= $balance) {
-                
-                $winamount = $row['amtbid'];
-                $newlimit = $limit['banklimit'] - $winamount;
-                $updatelimit->execute([$newlimit, $row['bankid']]);
-    //             echo '<tr>
-    //         			<td>'.$row['id'].'</td>
-    //         			<td>'.$row['bankname'].'</td>
-    //         			<td>'.$row['fwdrate'].'</td>
-    //                     <td>'.number_format($row['amtbid'],2).'</td>
-    //                     <td>'.$row['bidoption'].'</td>
-    //                     <td>'.number_format($newlimit,2).'</td>
-    //                     <td>'.number_format($winamount,2).'</td>
-    //         		  </tr>';
-                if ($winamount > 0 ) {
-                    $bidwin->bindParam(':bidid', $row['id']);
-                    $bidwin->bindParam(':bankid', $row['bankid']);
-                    $bidwin->bindParam(':rate', $row['fwdrate']);
-                    $bidwin->bindParam(':amtbid', $row['amtbid']);
-                    $bidwin->bindParam(':bidoption', $row['bidoption']);
-                    $bidwin->bindParam(':winamt', $winamount);
-                    $bidwin->bindParam(':batchref', $row['batchref']);
-                    $bidwin->bindParam(':fwddate', $row['fwddate']);
-                    $bidwin->bindParam(':couponamt', $drow->couponamt);
-                    $bidwin->execute();
-                }
-                $balance -= $winamount;
-            
-             // else if amtbid is greater than limit & amtbid is less than balance
-            } elseif ($row['amtbid'] > $limit['banklimit']  and $row['amtbid'] <= $balance) {
-                $winamount = $limit['banklimit'];
-                $newlimit = $limit['banklimit'] - $winamount;
-                $updatelimit->execute([$newlimit, $row['bankid']]);
-                
-    //             echo '<tr>
-    //         			<td>'.$row['id'].'</td>
-    //         			<td>'.$row['bankname'].'</td>
-    //         			<td>'.$row['fwdrate'].'</td>
-    //                     <td>'.number_format($row['amtbid'],2).'</td>
-    //                     <td>'.$row['bidoption'].'</td>
-    //                     <td>'.number_format($newlimit,2).'</td>
-    //                     <td>'.number_format($winamount,2).'</td>
-    //         		</tr>';
-                if ($winamount > 0 ) {
-                    $bidwin->bindParam(':bidid', $row['id']);
-                    $bidwin->bindParam(':bankid', $row['bankid']);
-                    $bidwin->bindParam(':rate', $row['fwdrate']);
-                    $bidwin->bindParam(':amtbid', $row['amtbid']);
-                    $bidwin->bindParam(':bidoption', $row['bidoption']);
-                    $bidwin->bindParam(':winamt', $winamount);
-                    $bidwin->bindParam(':batchref', $row['batchref']);
-                    $bidwin->bindParam(':fwddate', $row['fwddate']);
-                    $bidwin->bindParam(':couponamt', $drow->couponamt);
-                    $bidwin->execute();
-                }
-                
-                $balance -= $winamount;
-             
-            // else if amtbid is less than limit & amtbid is greater than balance    
-            } elseif ($row['amtbid'] >  $balance and $balance <= $limit['banklimit']) {
-                $winamount = $balance;
-                $newlimit = $limit['banklimit'] - $winamount;
-                $updatelimit->execute([$newlimit, $row['bankid']]);
-    //             echo '<tr>
-    //         			<td>'.$row['id'].'</td>
-    //         			<td>'.$row['bankname'].'</td>
-    //         			<td>'.$row['fwdrate'].'</td>
-    //                     <td>'.number_format($row['amtbid'],2).'</td>
-    //                     <td>'.$row['bidoption'].'</td>
-    //                     <td>'.number_format($newlimit,2).'</td>
-    //                     <td>'.number_format($winamount,2).'</td>
-    //         		</tr>';
-                if ($winamount > 0 ) {
-                    $bidwin->bindParam(':bidid', $row['id']);
-                    $bidwin->bindParam(':bankid', $row['bankid']);
-                    $bidwin->bindParam(':rate', $row['fwdrate']);
-                    $bidwin->bindParam(':amtbid', $row['amtbid']);
-                    $bidwin->bindParam(':bidoption', $row['bidoption']);
-                    $bidwin->bindParam(':winamt', $winamount);
-                    $bidwin->bindParam(':batchref', $row['batchref']);
-                    $bidwin->bindParam(':fwddate', $row['fwddate']);
-                    $bidwin->bindParam(':couponamt', $drow->couponamt);
-                    $bidwin->execute();
-                }      
-                $balance -= $winamount;
-                echo 'this is the final win for '. $drow->couponamt . ' and the win amount'. $winamount .'.';
-                    break;
-                    
-            } elseif ($row['amtbid'] > $balance and $balance > $limit['banklimit']) {
+    $winamount = 0;
     
-                $winamount = $limit['banklimit'];
-                $newlimit = $limit['banklimit'] - $winamount;
-                $updatelimit->execute([$newlimit, $row['bankid']]);
-    //             echo '<tr>
-    //         			<td>'.$row['id'].'</td>
-    //         			<td>'.$row['bankname'].'</td>
-    //         			<td>'.$row['fwdrate'].'</td>
-    //                     <td>'.number_format($row['amtbid'],2).'</td>
-    //                     <td>'.$row['bidoption'].'</td>
-    //                     <td>'.number_format($newlimit,2).'</td>
-    //                     <td>'.number_format($winamount,2).'</td>
-    //         		</tr>';
-                
-                if ($winamount > 0 ) {
-                    $bidwin->bindParam(':bidid', $row['id']);
-                    $bidwin->bindParam(':bankid', $row['bankid']);
-                    $bidwin->bindParam(':rate', $row['fwdrate']);
-                    $bidwin->bindParam(':amtbid', $row['amtbid']);
-                    $bidwin->bindParam(':bidoption', $row['bidoption']);
-                    $bidwin->bindParam(':winamt', $winamount);
-                    $bidwin->bindParam(':batchref', $row['batchref']);
-                    $bidwin->bindParam(':fwddate', $row['fwddate']);
-                    $bidwin->bindParam(':couponamt', $drow->couponamt);
-                    $bidwin->execute();   
-                }
-                $balance -= $winamount;
-                
-            } else {  
-                echo '<tr><td><span style="font-weight:bold">Testing</span></td><td><span style="font-weight:bold">'.number_format($drow->couponamt,2). '</span></td></tr>';           
-                       
-            }      
-        
+    //start a loop to get winners for each fwddate
+    while ($row = $stmt->fetch()) {
+        if ($row['amtbid'] <= $balance) {
+            $winamount = $row['amtbid'];
+            echo	'<table class="table table-hover table-bordered"><thead><tr><th>Ref</th><th>Date</th><th>Bank</th><th>Forward Rate</th><th>Amount Bid</th><th>Awarded Amount</th>
+			</tr></thead><tbody>';
+				    
+            //display in table
+            echo '<tr>
+                <td>'.$row['id'].'</td>
+                <td>'.$row['fwddate'].'</td>
+       			<td>'.$row['bankname'].'</td>
+                <td>'.$row['fwdrate'].'</td>
+                <td>'.number_format($row['amtbid'],2).'</td>
+                <td>'.number_format($winamount,2).'</td>
+          		</tr>';
+            $balance -= $winamount;
+            
+        } else {
+            $winamount = $balance;
+            
+            //display in table
+            echo '<tr>
+                <td>'.$row['id'].'</td>
+                <td>'.$row['fwddate'].'</td>
+       			<td>'.$row['bankname'].'</td>
+                <td>'.$row['fwdrate'].'</td>
+                <td>'.number_format($row['amtbid'],2).'</td>
+                <td>'.number_format($winamount,2).'</td>
+          		</tr> <tfoot><tr style="font-weight: bold; font-style: italic"><td colspan="5">Coupon Amount</td><td>'.number_format($drow->couponamt,2).'</td>
+                </tr></tfoot>';         
+            $balance -= $winamount;
+            break;          
         }
-    }}
+       }
+    }
 
 ?>
-</tbody>
-</table>
+
 </div>
 </body>
 </html>

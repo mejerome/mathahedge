@@ -23,7 +23,31 @@
     </ul>
   </div>
 </nav>
-  
+<div class="container" >
+<form name="runauction" action="winbids.php" method="post" accept-charset="utf-8">
+<select name="batchref" class="form-control">
+<?php 
+include 'database.php';
+
+$query = "SELECT batchref FROM hedgebids GROUP BY batchref";
+
+$stmt = $conn->prepare($query);
+$stmt->execute();
+
+while ($row = $stmt->fetch()) {
+    echo "<option value='" . $row['batchref'] ."'>" . $row['batchref'] ."</option>";
+}
+
+?>
+</select>
+<select name="displayhow" class="displayhow">
+	<option value="bydate">Display by Coupon Date</option>
+	<option value="bybank">Display by Bank</option>
+</select><br>
+<input type="submit" value="Run Auction">
+
+</form>
+</div>
 
 
 </body>
