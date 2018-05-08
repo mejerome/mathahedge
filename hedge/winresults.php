@@ -24,17 +24,7 @@
   </div>
 </nav>
   
-<div class="container">
-  <h1>WELCOME TO MATHA HEDGE AUCTION</h1>
-  
-	<h3>Upload Auction Sheet</h3>
-	
-	<form method="post" action="import_file.php" enctype="multipart/form-data">
-  		<input type="file" name="file"/><br>
-  		<input type="submit" name="submit_file" value="Upload"/>
-   	</form>
 
-</div>
 
 </body>
 </html>
