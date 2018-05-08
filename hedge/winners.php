@@ -97,10 +97,10 @@
       <a class="navbar-brand" href="#">Hedges</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="index.php">Home</a></li>
-      <li><a href="#">Banks Limit</a></li>
-      <li><a href="#">Mighty Bid</a></li>
-      <li><a href="#">Page 3</a></li>
+      <li><a href="index.php">Home</a></li>
+      <li><a href="banks.php">Banks</a></li>
+      <li class="active"><a href="runauction.php">Run Auction</a></li>
+      <li><a href="winresults.php">Auction Results</a></li>
     </ul>
   </div>
 </nav>

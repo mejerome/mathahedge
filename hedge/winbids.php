@@ -19,7 +19,7 @@
       <li><a href="index.php">Home</a></li>
       <li><a href="banks.php">Banks</a></li>
       <li class="active"><a href="runauction.php">Run Auction</a></li>
-      <li><a href="#">Auction Results</a></li>
+      <li><a href="winresults.php">Auction Results</a></li>
     </ul>
   </div>
 </nav>

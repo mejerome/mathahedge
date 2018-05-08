@@ -21,12 +21,12 @@
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">MathaRX</a>
 			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="index.php">Home</a></li>
-				<li><a href="banks.php">Banks</a></li>
-                <li><a href="runauction.php">Run Auction</a></li>
-                <li><a href="#">Auction Results</a></li>
-			</ul>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="index.php">Home</a></li>
+      <li><a href="banks.php">Banks</a></li>
+      <li><a href="runauction.php">Run Auction</a></li>
+      <li><a href="winresults.php">Auction Results</a></li>
+    </ul>
 		</div>
 	</nav>
 

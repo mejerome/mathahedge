@@ -33,7 +33,6 @@
   		<input type="file" name="file"/><br>
   		<input type="submit" name="submit_file" value="Upload"/>
    	</form>
-
 </div>
 
 </body>
