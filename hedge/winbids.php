@@ -13,7 +13,7 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">MathaRX</a>
+      <a class="navbar-brand" href="index.php">MathaRX</a>
     </div>
     <ul class="nav navbar-nav">
       <li><a href="index.php">Home</a></li>
@@ -23,11 +23,6 @@
     </ul>
   </div>
 </nav>
-<div class="container">
-	<form action="storewins.php">
-		<input type="submit" value="Store Auction">
-	</form>
-</div>
 
 <div class="container">
 
