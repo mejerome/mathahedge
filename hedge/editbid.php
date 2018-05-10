@@ -24,24 +24,19 @@
   </div>
 </nav>
 <div class="container">
-<h3>Search  Bid Details</h3> 
-<p>You  may search either by Bank Name and Coupon Date</p> 
-<form  method="post" action="searchresult.php?go"  id="searchform">
-<strong>Batch Reference: </strong><select name="batchref">
+<h3>Edit Bid Details</h3> 
+<form  method="post" action=""  id="editform">
 <?php 
 include 'database.php';
-$query = "SELECT batchref FROM hedgebids GROUP BY batchref";
-$stmt = $conn->prepare($query);
-$stmt->execute();
 
-while ($row = $stmt->fetch()) {
-    echo "<option value='" . $row['batchref'] ."'>" . $row['batchref'] ."</option>";
-}
+$id = $_GET['id'];
+
+echo $id;
+
+
+
 ?>
-</select><br>
-    <strong>Bank Name: </strong><input  type="text" name="bankname"><br>
-   <strong>Coupon Date: </strong><input type="date" name="date" ><br>
-    <input  type="submit" name="submit" value="Search"> 
+
 </form>
 </div>
 </body>

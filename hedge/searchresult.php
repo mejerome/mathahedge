@@ -40,9 +40,9 @@ $stmt->bindParam(':fwddate', $date);
 $stmt->bindParam(':bankname', $name);
 $stmt->execute();
 
-while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
-    echo $row->id.'#'.$row->fwddate.'#'.$row->fwdrate.'#'.$row->amtbid.'#'.$row->bankname;
-    echo '<a href="profile.php?id='.$row['pupil_id'].'">'.$row['pupil_id'].'</a>';
+while ($row = $stmt->fetch()) {
+//     echo $row->id.'#'.$row->fwddate.'#'.$row->fwdrate.'#'.$row->amtbid.'#'.$row->bankname;
+    echo '<a href="editbid.php?id='.$row['id'].'">'.$row['bankname'].' ---- '.$row['fwdrate'].' ---- '.$row['amtbid'].'</a><br>';
 }
 
 

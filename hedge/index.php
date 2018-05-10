@@ -35,7 +35,7 @@
    	</form>
 
 <a href="test.php">Test Page</a><br>
-<a href="editbid.php">Edit A Bid..</a>
+<a href="searchbid.php">Edit A Bid..</a>
 
 </div>
 
