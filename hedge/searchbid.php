@@ -23,22 +23,26 @@
     </ul>
   </div>
 </nav>
-  
 <div class="container">
-  <h1>WELCOME TO MATHA HEDGE AUCTION</h1>
-  
-	<h3>Upload Auction Sheet</h3>
-	
-	<form method="post" action="import_file.php" enctype="multipart/form-data">
-  		<input type="file" name="file"/><br>
-  		<input type="submit" name="submit_file" value="Upload"/>
-   	</form>
+<h3>Search  Bid Details</h3> 
+<p>You  may search either by Bank Name and Coupon Date</p> 
+<form  method="post" action="searchresult.php?go"  id="searchform">
+<strong>Batch Reference: </strong><select name="batchref">
+<?php 
+include 'database.php';
+$query = "SELECT batchref FROM hedgebids GROUP BY batchref";
+$stmt = $conn->prepare($query);
+$stmt->execute();
 
-<a href="test.php">Test Page</a><br>
-<a href="editbid.php">Edit A Bid..</a>
-
+while ($row = $stmt->fetch()) {
+    echo "<option value='" . $row['batchref'] ."'>" . $row['batchref'] ."</option>";
+}
+?>
+</select><br>
+    <strong>Bank Name: </strong><input  type="text" name="bankname"><br>
+   <strong>Coupon Date: </strong><input type="date" name="date" ><br>
+    <input  type="submit" name="submit" value="Search"> 
+</form>
 </div>
-
-
 </body>
 </html>

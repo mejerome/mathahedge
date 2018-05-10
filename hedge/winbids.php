@@ -24,7 +24,7 @@
   </div>
 </nav>
 <div class="container">
-	<a href="editbid.php">Search and Update Bid</a>
+	<a href="searchbid.php">Search and Update Bid</a>
 	<form action="storewins.php">
 		<input type="submit" value="Store Auction">
 	</form>

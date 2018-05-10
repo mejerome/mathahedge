@@ -34,13 +34,15 @@ $date = $_POST['date'];
 $stmt = $conn->prepare("select hedgebids.id, fwddate, fwdrate, amtbid, bankname, couponamt from hedgebids, banks
                where banks.id = hedgebids.bankid and batchref = :batchref and fwddate = :fwddate
                 and bankname like :bankname");
+$name = "%".$bankname."%";
 $stmt->bindParam(':batchref', $batchref);
 $stmt->bindParam(':fwddate', $date);
-$stmt->bindParam(':bankname', '%'.$bankname.'%');
+$stmt->bindParam(':bankname', $name);
 $stmt->execute();
 
 while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
     echo $row->id.'#'.$row->fwddate.'#'.$row->fwdrate.'#'.$row->amtbid.'#'.$row->bankname;
+    echo '<a href="profile.php?id='.$row['pupil_id'].'">'.$row['pupil_id'].'</a>';
 }
 
 
