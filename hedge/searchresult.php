@@ -13,7 +13,7 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">MathaRX</a>
+      <a class="navbar-brand" href="index.php">MathaRX</a>
     </div>
     <ul class="nav navbar-nav">
       <li class="active"><a href="index.php">Home</a></li>
@@ -24,25 +24,30 @@
   </div>
 </nav>
 <div class="container">
-<h3>Search  Bid Details</h3> 
-<p>You  may search either by Bank Name and Coupon Date</p> 
-<form  method="post" action="searchresult.php?go"  id="searchform">
-<strong>Batch Reference: </strong><select name="batchref">
+	<h2>Please find search results below:</h2>
 <?php 
 include 'database.php';
-$query = "SELECT batchref FROM hedgebids GROUP BY batchref";
-$stmt = $conn->prepare($query);
+$batchref = $_POST['batchref'];
+$bankname = $_POST['bankname'];
+$date = $_POST['date'];
+
+$stmt = $conn->prepare("select hedgebids.id, fwddate, fwdrate, amtbid, bankname, couponamt from hedgebids, banks
+               where banks.id = hedgebids.bankid and batchref = :batchref and fwddate = :fwddate
+                and bankname like :bankname");
+$stmt->bindParam(':batchref', $batchref);
+$stmt->bindParam(':fwddate', $date);
+$stmt->bindParam(':bankname', '%'.$bankname.'%');
 $stmt->execute();
 
-while ($row = $stmt->fetch()) {
-    echo "<option value='" . $row['batchref'] ."'>" . $row['batchref'] ."</option>";
+while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
+    echo $row->id.'#'.$row->fwddate.'#'.$row->fwdrate.'#'.$row->amtbid.'#'.$row->bankname;
 }
+
+
+
 ?>
-</select><br>
-    <strong>Bank Name: </strong><input  type="text" name="bankname"><br>
-   <strong>Coupon Date: </strong><input type="date" name="date" ><br>
-    <input  type="submit" name="submit" value="Search"> 
-</form>
+
+
 </div>
 </body>
 </html>

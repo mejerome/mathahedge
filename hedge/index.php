@@ -35,5 +35,7 @@
    	</form>
 </div>
 
+<a href="test.php">Test Page</a>
+
 </body>
 </html>
