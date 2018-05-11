@@ -24,7 +24,7 @@
   </div>
 </nav>
 <div class="container" >
-<form name="runauction" action="winbids.php" method="post" accept-charset="utf-8">
+<form name="runauction" action="winreportbydate.php" method="post" accept-charset="utf-8">
 <label>Batch Reference</label>
 <select name="batchref" class="form-control">
 <?php 
@@ -46,11 +46,9 @@ while ($row = $stmt->fetch()) {
 	<option value="bydate">Display by Coupon Date</option>
 	<option value="bybank">Display by Bank</option>
 </select><br>
-<input type="submit" class=""  value="Show Win Report">
+<input type="submit"  value="Show Win Report">
 
 </form>
 </div>
-
-
 </body>
 </html>
