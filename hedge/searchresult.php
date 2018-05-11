@@ -42,14 +42,10 @@ $stmt->execute();
 
 while ($row = $stmt->fetch()) {
 //     echo $row->id.'#'.$row->fwddate.'#'.$row->fwdrate.'#'.$row->amtbid.'#'.$row->bankname;
-    echo '<a href="editbid.php?id='.$row['id'].'">'.$row['bankname'].' ---- '.$row['fwdrate'].' ---- '.$row['amtbid'].'</a><br>';
+    echo '<a href="editbid.php?id='.$row['id'].'">'.$row['bankname'].'    ----     '.$row['fwdrate'].'     ----     '.$row['amtbid'].'</a><br>';
 }
 
-
-
 ?>
-
-
 </div>
 </body>
 </html>

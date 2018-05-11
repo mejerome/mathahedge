@@ -16,41 +16,33 @@
       <a class="navbar-brand" href="#">MathaRX</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="index.php">Home</a></li>
+      <li class="active"><a href="index.php">Home</a></li>
       <li><a href="banks.php">Banks</a></li>
       <li><a href="runauction.php">Run Auction</a></li>
-      <li class="active"><a href="winresults.php">Auction Results</a></li>
+      <li><a href="winresults.php">Auction Results</a></li>
     </ul>
   </div>
 </nav>
-<div class="container" >
-<form name="runauction" action="winbids.php" method="post" accept-charset="utf-8">
-<label>Batch Reference</label>
-<select name="batchref" class="form-control">
+<div class="container">
+<h3>Edit Bid Details</h3> 
+<form  method="post" action="editedbid.php"  id="editform">
 <?php 
 include 'database.php';
 
-$query = "SELECT batchref FROM results GROUP BY batchref";
+$id = $_POST['id'];
+$fwdrate = $_POST['fwdrate'];
+$amtbid = $_POST['amtbid'];
 
-$stmt = $conn->prepare($query);
+$stmt = $conn->prepare("UPDATE hedgebids SET fwdrate = :fwdrate, amtbid = :amtbid
+                            WHERE id = :id");
+$stmt->bindParam(':id', $id);
+$stmt->bindParam(':fwdrate', $fwdrate);
+$stmt->bindParam(':amtbid', $amtbid);
 $stmt->execute();
-
-while ($row = $stmt->fetch()) {
-    echo "<option value='" . $row['batchref'] ."'>" . $row['batchref'] ."</option>";
-}
+echo 'The Foward Rate and Bid Amount for Bid Reference Number '.$id.' has been set to '.$fwdrate.' and '.$amtbid.' respectively.';
 
 ?>
-</select>
-<label>Report Type</label>
-<select name="displayhow" class="form-control">
-	<option value="bydate">Display by Coupon Date</option>
-	<option value="bybank">Display by Bank</option>
-</select><br>
-<input type="submit" class=""  value="Show Win Report">
-
 </form>
 </div>
-
-
 </body>
 </html>
